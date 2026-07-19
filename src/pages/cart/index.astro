@@ -1,0 +1,368 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import site from '../../data/site.json';
+---
+
+<BaseLayout
+  title={`Кошик та оформлення покупки — ${site.name}`}
+  description="Кошик товарів та оформлення покупки: самовивіз з магазину, безкоштовна доставка по місту або Нова пошта."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Кошик</span>
+        <h1>Ваше замовлення</h1>
+        <p class="lead">Перевірте товари, оберіть спосіб отримання та залиште заявку — ми зв'яжемось для підтвердження.</p>
+      </div>
+
+      <div id="cart-empty" class="ticket empty-card" hidden>
+        <p>Кошик порожній.</p>
+        <a href="/catalog/" class="btn btn-primary">Перейти в каталог</a>
+      </div>
+
+      <div id="cart-filled" class="cart-layout" hidden>
+        <div class="ticket cart-items">
+          <span class="ticket-no">Товари</span>
+          <div id="cart-items-list"></div>
+          <div class="cart-total-row">
+            <span>Разом</span>
+            <strong id="cart-total">0 ₴</strong>
+          </div>
+          <p id="cart-request-note" class="buy-hint" hidden>Частина товарів має ціну «за запитом» — фінальну суму уточнимо після заявки.</p>
+        </div>
+
+        <div class="ticket form-card" id="checkout-card">
+          <div class="form-intro">
+            <span class="ticket-no">Оформлення</span>
+            <h2>Дані для зв'язку</h2>
+            <p>Опишіть, як вас звати і як зручно отримати замовлення.</p>
+          </div>
+
+          <form id="checkout-form" class="checkout-form">
+            <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            <div class="field">
+              <label for="ck-name">Ім'я</label>
+              <input type="text" id="ck-name" name="name" placeholder="Як до вас звертатись" autocomplete="name" />
+            </div>
+
+            <div class="field">
+              <label for="ck-phone">Телефон *</label>
+              <input type="tel" id="ck-phone" name="phone" placeholder="+380 ХХ ХХХ ХХ ХХ" required autocomplete="tel" />
+            </div>
+
+            <fieldset class="field field-full delivery-fieldset">
+              <legend>Спосіб отримання *</legend>
+
+              <label class="radio-row">
+                <input type="radio" name="deliveryMethod" value="pickup" checked />
+                <span>Самовивіз з магазину ({site.address})</span>
+              </label>
+              <label class="radio-row">
+                <input type="radio" name="deliveryMethod" value="city" />
+                <span>Доставка по {site.city} — безкоштовно</span>
+              </label>
+              <label class="radio-row">
+                <input type="radio" name="deliveryMethod" value="nova_poshta" />
+                <span>Нова пошта в інше місто</span>
+              </label>
+            </fieldset>
+
+            <p class="delivery-note" id="delivery-note-pickup">Оплата готівкою або карткою при отриманні в магазині.</p>
+            <p class="delivery-note" id="delivery-note-city" hidden>Доставка безкоштовна. Оплата готівкою або на картку при отриманні.</p>
+            <p class="delivery-note" id="delivery-note-nova_poshta" hidden>
+              Знадобиться передоплата до відправки. Вкажіть місто — ми зв'яжемось, щоб узгодити відділення й оплату.
+            </p>
+
+            <div class="field" id="field-address" hidden>
+              <label for="ck-address">Адреса доставки</label>
+              <input type="text" id="ck-address" name="address" placeholder="Вулиця, будинок, квартира" autocomplete="street-address" />
+            </div>
+
+            <div class="field" id="field-city" hidden>
+              <label for="ck-city">Місто отримання *</label>
+              <input type="text" id="ck-city" name="city" placeholder="Наприклад, Суми" />
+            </div>
+
+            <div class="field" id="field-branch" hidden>
+              <label for="ck-branch">Відділення (якщо знаєте)</label>
+              <input type="text" id="ck-branch" name="branch" placeholder="№ відділення або адреса — можна уточнити пізніше" />
+            </div>
+
+            <div class="field field-full">
+              <label for="ck-comment">Коментар</label>
+              <textarea id="ck-comment" name="comment" rows="2" placeholder="Побажання до замовлення"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="ck-submit">Надіслати заявку</button>
+            <p class="form-status" id="ck-status" role="status"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section { padding: 48px 0 70px; }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .section-head h1 { font-size: 26px; margin-bottom: 10px; }
+  .lead { color: var(--text-dim); max-width: 60ch; margin: 0 0 30px; }
+
+  .empty-card { padding: 32px; text-align: center; display: grid; gap: 16px; justify-items: center; }
+
+  .cart-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; }
+  .cart-items { padding: 24px; }
+
+  .cart-item {
+    display: grid;
+    grid-template-columns: 56px 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .cart-item:last-of-type { border-bottom: none; }
+  .cart-item img { width: 56px; height: 56px; object-fit: cover; border-radius: var(--radius); background: var(--bg); }
+  .cart-item-name { font-size: 13.5px; }
+  .cart-item-name a { color: var(--text); }
+  .cart-item-name a:hover { color: var(--accent); }
+  .cart-item-price { font-family: var(--font-mono); font-size: 12.5px; color: var(--text-dim); margin-top: 3px; }
+  .cart-item-qty { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .cart-item-qty button { width: 26px; height: 26px; background: var(--bg); color: var(--text); border: none; cursor: pointer; font-family: var(--font-mono); }
+  .cart-item-qty input { width: 34px; height: 26px; text-align: center; background: var(--bg); color: var(--text); border: none; border-left: 1px solid var(--border); border-right: 1px solid var(--border); font-family: var(--font-mono); font-size: 12.5px; }
+  .cart-item-remove { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 12px; text-decoration: underline; }
+  .cart-item-remove:hover { color: var(--out); }
+
+  .cart-total-row { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 6px; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 16px; }
+  .buy-hint { color: var(--text-dim); font-size: 12.5px; margin: 10px 0 0; }
+
+  .form-card { padding: 24px; }
+  .form-intro h2 { font-size: 19px; margin: 6px 0 8px; }
+  .form-intro p { color: var(--text-dim); font-size: 13.5px; margin: 0 0 16px; }
+
+  .checkout-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-full { grid-column: 1 / -1; }
+  .field label, .delivery-fieldset legend { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .field input, .field textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    resize: vertical;
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+  .delivery-fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: grid; gap: 8px; margin: 0; }
+  .delivery-fieldset legend { padding: 0 4px; }
+  .radio-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text); cursor: pointer; }
+  .radio-row input { accent-color: var(--accent); }
+
+  .delivery-note { grid-column: 1 / -1; margin: -4px 0 0; font-size: 12.5px; color: var(--text-dim); }
+
+  #ck-submit { grid-column: 1 / -1; justify-self: start; }
+  .form-status { grid-column: 1 / -1; margin: 0; font-size: 13.5px; min-height: 1.2em; }
+  .form-status.ok { color: var(--ok); }
+  .form-status.error { color: var(--out); }
+
+  @media (max-width: 900px) {
+    .cart-layout { grid-template-columns: 1fr; }
+    .checkout-form { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .cart-item { grid-template-columns: 44px 1fr; grid-template-areas: "img name" "img controls"; }
+    .cart-item img { grid-area: img; }
+    .cart-item-name { grid-area: name; }
+    .cart-item-qty, .cart-item-remove { grid-area: controls; }
+  }
+</style>
+
+<script>
+  function renderCart() {
+    const w = window as any;
+    if (!w.MelonCart) return;
+
+    const items = w.MelonCart.read();
+    const emptyEl = document.getElementById('cart-empty');
+    const filledEl = document.getElementById('cart-filled');
+    const listEl = document.getElementById('cart-items-list');
+    const totalEl = document.getElementById('cart-total');
+    const requestNoteEl = document.getElementById('cart-request-note');
+
+    if (!items.length) {
+      if (emptyEl) emptyEl.hidden = false;
+      if (filledEl) filledEl.hidden = true;
+      return;
+    }
+
+    if (emptyEl) emptyEl.hidden = true;
+    if (filledEl) filledEl.hidden = false;
+
+    if (listEl) {
+      listEl.innerHTML = items.map((item: any) => {
+        const priceText = item.priceOnRequest ? 'Ціна за запитом' : `${item.price} ₴ / шт.`;
+        return `
+          <div class="cart-item" data-slug="${item.slug}">
+            <img src="${item.image}" alt="" loading="lazy" />
+            <div>
+              <div class="cart-item-name"><a href="/catalog/${item.slug}/">${item.name}</a></div>
+              <div class="cart-item-price">${priceText}</div>
+            </div>
+            <div class="cart-item-qty">
+              <button type="button" data-qty-minus>−</button>
+              <input type="number" min="1" max="99" value="${item.qty}" data-qty-input />
+              <button type="button" data-qty-plus>+</button>
+            </div>
+            <button type="button" class="cart-item-remove" data-remove>Прибрати</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (totalEl) totalEl.textContent = `${w.MelonCart.total(items)} ₴`;
+    if (requestNoteEl) requestNoteEl.hidden = !w.MelonCart.hasPriceOnRequest(items);
+  }
+
+  renderCart();
+  document.addEventListener('cart:updated', renderCart);
+
+  document.getElementById('cart-items-list')?.addEventListener('click', (e) => {
+    const w = window as any;
+    const target = e.target as HTMLElement;
+    const row = target.closest('.cart-item') as HTMLElement | null;
+    if (!row || !w.MelonCart) return;
+    const slug = row.dataset.slug as string;
+    const input = row.querySelector('[data-qty-input]') as HTMLInputElement | null;
+
+    if (target.closest('[data-qty-minus]')) {
+      const next = Math.max(0, (parseInt(input?.value || '1', 10) || 1) - 1);
+      w.MelonCart.setQty(slug, next);
+    } else if (target.closest('[data-qty-plus]')) {
+      const next = Math.min(99, (parseInt(input?.value || '1', 10) || 1) + 1);
+      w.MelonCart.setQty(slug, next);
+    } else if (target.closest('[data-remove]')) {
+      w.MelonCart.remove(slug);
+    }
+  });
+
+  document.getElementById('cart-items-list')?.addEventListener('change', (e) => {
+    const w = window as any;
+    const target = e.target as HTMLElement;
+    if (!target.matches('[data-qty-input]') || !w.MelonCart) return;
+    const row = target.closest('.cart-item') as HTMLElement | null;
+    if (!row) return;
+    const slug = row.dataset.slug as string;
+    const val = Math.max(1, Math.min(99, parseInt((target as HTMLInputElement).value, 10) || 1));
+    w.MelonCart.setQty(slug, val);
+  });
+
+  // --- перемикання полів залежно від способу отримання ---
+  const deliveryRadios = document.querySelectorAll('input[name="deliveryMethod"]');
+  const notes: Record<string, HTMLElement | null> = {
+    pickup: document.getElementById('delivery-note-pickup'),
+    city: document.getElementById('delivery-note-city'),
+    nova_poshta: document.getElementById('delivery-note-nova_poshta'),
+  };
+  const fieldAddress = document.getElementById('field-address');
+  const fieldCity = document.getElementById('field-city');
+  const fieldBranch = document.getElementById('field-branch');
+  const cityInput = document.getElementById('ck-city') as HTMLInputElement | null;
+
+  function updateDeliveryUI() {
+    const selected = (document.querySelector('input[name="deliveryMethod"]:checked') as HTMLInputElement | null)?.value || 'pickup';
+    Object.entries(notes).forEach(([key, el]) => { if (el) el.hidden = key !== selected; });
+    if (fieldAddress) fieldAddress.hidden = selected !== 'city';
+    if (fieldCity) fieldCity.hidden = selected !== 'nova_poshta';
+    if (fieldBranch) fieldBranch.hidden = selected !== 'nova_poshta';
+    if (cityInput) cityInput.required = selected === 'nova_poshta';
+  }
+  deliveryRadios.forEach((r) => r.addEventListener('change', updateDeliveryUI));
+  updateDeliveryUI();
+
+  // --- відправка заявки ---
+  const form = document.getElementById('checkout-form') as HTMLFormElement | null;
+  const status = document.getElementById('ck-status');
+  const submitBtn = document.getElementById('ck-submit') as HTMLButtonElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const w = window as any;
+    if (!status || !submitBtn || !w.MelonCart) return;
+
+    const items = w.MelonCart.read();
+    if (!items.length) {
+      status.textContent = 'Кошик порожній.';
+      status.className = 'form-status error';
+      return;
+    }
+
+    const formData = new FormData(form);
+    const deliveryMethod = (formData.get('deliveryMethod') || 'pickup').toString();
+    const payload = {
+      name: (formData.get('name') || '').toString(),
+      phone: (formData.get('phone') || '').toString(),
+      deliveryMethod,
+      address: (formData.get('address') || '').toString(),
+      city: (formData.get('city') || '').toString(),
+      branch: (formData.get('branch') || '').toString(),
+      comment: (formData.get('comment') || '').toString(),
+      website: (formData.get('website') || '').toString(),
+      items: items.map((i: any) => ({ name: i.name, slug: i.slug, qty: i.qty, price: i.price, priceOnRequest: i.priceOnRequest })),
+    };
+
+    if (!payload.phone.trim()) {
+      status.textContent = 'Вкажіть телефон, щоб ми могли зв\'язатись.';
+      status.className = 'form-status error';
+      return;
+    }
+    if (deliveryMethod === 'nova_poshta' && !payload.city.trim()) {
+      status.textContent = 'Вкажіть місто для відправки Новою поштою.';
+      status.className = 'form-status error';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Надсилаємо...';
+    status.textContent = '';
+    status.className = 'form-status';
+
+    try {
+      const res = await fetch('/api/send-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        status.textContent = 'Заявку надіслано! Ми зв\'яжемось найближчим часом, щоб підтвердити замовлення.';
+        status.className = 'form-status ok';
+        form.reset();
+        w.MelonCart.clear();
+        updateDeliveryUI();
+      } else {
+        status.textContent = data.error || 'Не вдалося надіслати. Зателефонуйте нам напряму.';
+        status.className = 'form-status error';
+      }
+    } catch {
+      status.textContent = 'Не вдалося надіслати. Зателефонуйте нам напряму.';
+      status.className = 'form-status error';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Надіслати заявку';
+    }
+  });
+</script>

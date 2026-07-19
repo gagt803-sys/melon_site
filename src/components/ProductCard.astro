@@ -36,6 +36,21 @@ const stockLabel = { in: 'В наявності', order: 'Під замовле�
         : <span class="card-price">{product.price} ₴</span>}
       <span class:list={['stock', product.availability]}>{stockLabel}</span>
     </div>
+    {product.availability !== 'out' && (
+      <button
+        type="button"
+        class="btn btn-ghost card-add"
+        data-add-to-cart
+        data-slug={product.slug}
+        data-name={product.name}
+        data-price={product.price}
+        data-price-on-request={String(!!product.priceOnRequest)}
+        data-image={product.image}
+        data-availability={product.availability}
+      >
+        У кошик
+      </button>
+    )}
   </div>
 </a>
 
@@ -112,4 +127,39 @@ const stockLabel = { in: 'В наявності', order: 'Під замовле�
   .stock.in { color: var(--ok); }
   .stock.order { color: var(--text-dim); }
   .stock.out { color: var(--out); }
+  .card-add {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
 </style>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement)?.closest('[data-add-to-cart]') as HTMLElement | null;
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const w = window as any;
+    if (!w.MelonCart) return;
+
+    w.MelonCart.add({
+      slug: btn.dataset.slug,
+      name: btn.dataset.name,
+      price: Number(btn.dataset.price) || 0,
+      priceOnRequest: btn.dataset.priceOnRequest === 'true',
+      image: btn.dataset.image,
+      availability: btn.dataset.availability,
+    }, 1);
+
+    const original = btn.textContent;
+    btn.textContent = 'Додано ✓';
+    btn.setAttribute('disabled', 'true');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.removeAttribute('disabled');
+    }, 1200);
+  });
+</script>

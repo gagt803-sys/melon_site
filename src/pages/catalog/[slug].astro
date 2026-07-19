@@ -55,8 +55,28 @@ const categoryLabel = categories.find((c) => c.id === product.category)?.label ?
           {product.warranty && <div><dt>Гарантія</dt><dd>{product.warranty}</dd></div>}
         </dl>
 
+        {product.availability !== 'out' ? (
+          <div class="buy-box">
+            <div class="qty-row">
+              <span class="qty-label">Кількість</span>
+              <div class="qty-stepper">
+                <button type="button" id="qty-minus" aria-label="Менше">−</button>
+                <input type="number" id="qty-input" value="1" min="1" max="99" inputmode="numeric" />
+                <button type="button" id="qty-plus" aria-label="Більше">+</button>
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-primary" id="buy-now-btn">Оформити покупку</button>
+              <button type="button" class="btn btn-ghost" id="add-to-cart-btn">Додати в кошик</button>
+            </div>
+            <p class="buy-hint">Самовивіз з магазину, безкоштовна доставка по місту або Нова пошта — спосіб оберете на сторінці кошика.</p>
+          </div>
+        ) : (
+          <p class="buy-hint">Цього товару зараз немає в наявності — зателефонуйте, підкажемо аналог або термін надходження.</p>
+        )}
+
         <div class="actions">
-          <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="btn btn-primary">
+          <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="btn btn-ghost">
             Подзвонити: {site.phoneDisplay}
           </a>
           <a href="/contacts/" class="btn btn-ghost">Як забрати</a>
@@ -141,9 +161,86 @@ const categoryLabel = categories.find((c) => c.id === product.category)?.label ?
   .specs dt { color: var(--text-dim); margin: 0; }
   .specs dd { margin: 0; font-family: var(--font-mono); }
 
-  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+
+  .buy-box {
+    padding: 18px;
+    margin-bottom: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .qty-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .qty-label { font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .qty-stepper { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .qty-stepper button {
+    width: 34px; height: 34px;
+    background: var(--bg);
+    color: var(--text);
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: var(--font-mono);
+  }
+  .qty-stepper button:hover { color: var(--accent); }
+  .qty-stepper input {
+    width: 46px; height: 34px;
+    text-align: center;
+    background: var(--bg);
+    color: var(--text);
+    border: none;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 14px;
+  }
+  .buy-hint { color: var(--text-dim); font-size: 12.5px; margin: 0; }
 
   @media (max-width: 800px) {
     .product-layout { grid-template-columns: 1fr; }
   }
 </style>
+
+<script define:vars={{
+  slug: product.slug,
+  name: product.name,
+  price: product.price,
+  priceOnRequest: !!product.priceOnRequest,
+  image: product.image,
+  availability: product.availability,
+}}>
+  const qtyInput = document.getElementById('qty-input');
+  const minusBtn = document.getElementById('qty-minus');
+  const plusBtn = document.getElementById('qty-plus');
+  const addBtn = document.getElementById('add-to-cart-btn');
+  const buyBtn = document.getElementById('buy-now-btn');
+
+  function getQty() {
+    const v = parseInt(qtyInput?.value, 10);
+    return Number.isFinite(v) && v > 0 ? Math.min(99, v) : 1;
+  }
+
+  minusBtn?.addEventListener('click', () => {
+    if (qtyInput) qtyInput.value = String(Math.max(1, getQty() - 1));
+  });
+  plusBtn?.addEventListener('click', () => {
+    if (qtyInput) qtyInput.value = String(Math.min(99, getQty() + 1));
+  });
+
+  function addCurrentToCart() {
+    if (!window.MelonCart) return;
+    window.MelonCart.add({ slug, name, price, priceOnRequest, image, availability }, getQty());
+  }
+
+  addBtn?.addEventListener('click', () => {
+    addCurrentToCart();
+    const original = addBtn.textContent;
+    addBtn.textContent = 'Додано ✓';
+    setTimeout(() => { addBtn.textContent = original; }, 1200);
+  });
+
+  buyBtn?.addEventListener('click', () => {
+    addCurrentToCart();
+    window.location.href = '/cart/';
+  });
+</script>

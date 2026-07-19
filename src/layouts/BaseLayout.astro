@@ -45,6 +45,7 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline src="/js/cart.js"></script>
     {site.gaId && (
       <>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${site.gaId}`}></script>
