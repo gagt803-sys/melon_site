@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../data/site.json';
+---
+
+<BaseLayout
+  title={`Сторінку не знайдено — ${site.name}`}
+  description="Такої сторінки немає, або вона була переміщена."
+>
+  <section class="section">
+    <div class="container">
+      <div class="not-found ticket">
+        <span class="ticket-no">№404</span>
+        <span class="eyebrow">Помилка</span>
+        <h1>Сторінку не знайдено</h1>
+        <p class="not-found-text">
+          Можливо, посилання застаріло, або сторінку було переміщено.
+          Перевірте адресу ще раз, або скористайтесь одним із посилань нижче.
+        </p>
+        <div class="not-found-actions">
+          <a href="/" class="btn btn-primary">На головну</a>
+          <a href="/catalog/" class="btn btn-ghost">До каталогу</a>
+          <a href="/contacts/" class="btn btn-ghost">Контакти</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section { padding: 44px 0 70px; }
+
+  .eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 10px 0 6px;
+  }
+
+  .not-found {
+    max-width: 560px;
+    margin: 40px auto;
+    padding: 48px 36px;
+    text-align: center;
+  }
+
+  .not-found h1 { font-size: 26px; }
+
+  .not-found-text {
+    color: var(--text-dim);
+    margin: 0 0 28px;
+  }
+
+  .not-found-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+</style>

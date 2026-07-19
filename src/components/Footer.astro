@@ -29,6 +29,7 @@ const year = new Date().getFullYear();
   </div>
   <div class="container footer-bottom">
     <span>© {year} {site.shortName}. {site.city}.</span>
+    <a href="/privacy/" class="footer-bottom-link">Політика конфіденційності</a>
   </div>
 </footer>
 
@@ -84,7 +85,13 @@ const year = new Date().getFullYear();
     padding: 16px 20px;
     font-size: 12px;
     color: var(--text-dim);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    justify-content: space-between;
   }
+  .footer-bottom-link { color: var(--text-dim); }
+  .footer-bottom-link:hover { color: var(--accent); }
   @media (max-width: 700px) {
     .footer-inner { grid-template-columns: 1fr; }
   }
