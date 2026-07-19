@@ -1,0 +1,173 @@
+---
+import site from '../data/site.json';
+
+const nav = [
+  { href: '/', label: 'Головна' },
+  { href: '/catalog/', label: 'Магазин' },
+  { href: '/repair/', label: 'Ремонт' },
+  { href: '/contacts/', label: 'Контакти' },
+];
+const current = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <img src="/logo.png" alt="Мелон" class="logo-img" width="40" height="40" />
+      <span class="logo-text">{site.shortName}<br /><small>{site.city}</small></span>
+    </a>
+
+    <nav class="nav" aria-label="Основна навігація">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class:list={['nav-link', { active: current === item.href }]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="btn btn-primary phone-btn" aria-label={`Зателефонувати: ${site.phone}`}>
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+      <span class="phone-btn-label">Зателефонувати</span>
+      <span class="phone-btn-number">{site.phoneDisplay}</span>
+    </a>
+
+    <button class="burger" aria-label="Меню" aria-expanded="false" id="burger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Мобільна навігація">
+    {nav.map((item) => (
+      <a href={item.href} class="nav-mobile-link">{item.label}</a>
+    ))}
+    <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="btn btn-primary" style="margin-top:8px;">
+      Подзвонити: {site.phoneDisplay}
+    </a>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(20, 20, 20, 0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: block;
+    flex-shrink: 0;
+  }
+  .logo-text {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+  }
+  .logo-text small {
+    font-family: var(--font-body);
+    text-transform: none;
+    color: var(--text-dim);
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+  .nav {
+    display: flex;
+    gap: 22px;
+    margin-left: 12px;
+    flex: 1;
+  }
+  .nav-link {
+    font-size: 14px;
+    color: var(--text-dim);
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+  .phone-btn { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; overflow: hidden; }
+  .phone-btn-number {
+    max-width: 0;
+    opacity: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: max-width 0.25s ease, opacity 0.2s ease, margin 0.25s ease;
+  }
+  .phone-btn:hover .phone-btn-number,
+  .phone-btn:focus-visible .phone-btn-number {
+    max-width: 160px;
+    opacity: 1;
+    margin-left: 2px;
+  }
+  .burger {
+    display: none;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 40px;
+    height: 40px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  .burger span {
+    width: 18px;
+    height: 2px;
+    background: var(--text);
+  }
+  .nav-mobile {
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 20px 18px;
+    border-top: 1px solid var(--border);
+  }
+  .nav-mobile-link {
+    padding: 10px 0;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 14px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-mobile.open { display: flex; }
+
+  @media (max-width: 860px) {
+    .nav, .phone-btn { display: none; }
+    .burger { display: flex; }
+  }
+</style>
+
+<script>
+  const burger = document.getElementById('burger');
+  const navMobile = document.getElementById('nav-mobile');
+  burger?.addEventListener('click', () => {
+    const isOpen = navMobile?.classList.toggle('open');
+    burger.setAttribute('aria-expanded', String(!!isOpen));
+  });
+</script>

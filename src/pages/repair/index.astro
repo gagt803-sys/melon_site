@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import services from '../../data/services.json';
+import site from '../../data/site.json';
+---
+
+<BaseLayout
+  title={`Ремонт техніки в ${site.cityLocative} — телефони, планшети, телевізори, ноутбуки, ПК`}
+  description={`Ремонт телефонів, планшетів, телевізорів, ноутбуків, комп'ютерів, чайників, пилососів, прасок та іншої техніки в ${site.cityLocative}. Приймаємо в майстерні або виїжджаємо додому.`}
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Ремонт</span>
+        <h1>Що і як ремонтуємо</h1>
+        <p class="lead">
+          Приносите техніку в майстерню — або викликаєте майстра додому, якщо прилад
+          важкий чи стаціонарний. Діагностика на місці, кажемо ціну одразу.
+        </p>
+      </div>
+
+      <div class="grid-services">
+        {services.map((s) => (
+          <div class="ticket service-card">
+            <h3>{s.title}</h3>
+            <p>{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Як це працює</span>
+        <h2>Від дзвінка до готового ремонту</h2>
+      </div>
+      <div class="steps">
+        <div class="step ticket">
+          <span class="step-no">01</span>
+          <h3>Звертаєтесь</h3>
+          <p>Телефонуєте або пишете, коротко описуєте несправність.</p>
+        </div>
+        <div class="step ticket">
+          <span class="step-no">02</span>
+          <h3>Діагностика</h3>
+          <p>Приносите прилад в майстерню, або майстер виїжджає на місце.</p>
+        </div>
+        <div class="step ticket">
+          <span class="step-no">03</span>
+          <h3>Кажемо ціну</h3>
+          <p>Озвучуємо вартість і термін одразу після діагностики, без сюрпризів.</p>
+        </div>
+        <div class="step ticket">
+          <span class="step-no">04</span>
+          <h3>Забираєте прилад</h3>
+          <p>Отримуєте відремонтовану техніку з гарантією на виконані роботи.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div class="ticket call-card">
+        <span class="ticket-no">Виїзд майстра</span>
+        <h2>Ремонт додому</h2>
+        <p>
+          Для великих чи важких приладів майстер виїжджає на адресу. Вартість виїзду
+          узгоджується по телефону і залежить від району.
+        </p>
+        <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="btn btn-primary">Викликати майстра</a>
+      </div>
+
+      <div class="ticket call-card">
+        <span class="ticket-no">Скупка техніки</span>
+        <h2>Здати непотрібну техніку</h2>
+        <p>
+          Купуємо стару, непрацюючу або зайву техніку — на деталі або для відновлення.
+          Зателефонуйте і опишіть стан приладу, оцінимо одразу.
+        </p>
+        <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="btn btn-ghost">Дізнатись ціну</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="ticket form-card" id="request-card">
+        <div class="form-intro">
+          <span class="ticket-no">Не любите дзвонити?</span>
+          <h2>Залишити заявку</h2>
+          <p>Опишіть несправність текстом — передзвонимо або відповімо, як тільки звільниться майстер.</p>
+        </div>
+
+        <form id="request-form" class="request-form">
+          <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <div class="field">
+            <label for="req-name">Ім'я</label>
+            <input type="text" id="req-name" name="name" placeholder="Як до вас звертатись" autocomplete="name" />
+          </div>
+
+          <div class="field">
+            <label for="req-phone">Телефон *</label>
+            <input type="tel" id="req-phone" name="phone" placeholder="+380 ХХ ХХХ ХХ ХХ" required autocomplete="tel" />
+          </div>
+
+          <div class="field field-full">
+            <label for="req-message">Що трапилось</label>
+            <textarea id="req-message" name="message" rows="3" placeholder="Наприклад: не гріє чайник, клацає і вимикається"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="req-submit">Надіслати заявку</button>
+          <p class="form-status" id="req-status" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section { padding: 48px 0; }
+  .section-alt { background: var(--surface); }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .section-head h1 { font-size: 26px; margin-bottom: 10px; }
+  .lead { color: var(--text-dim); max-width: 60ch; margin: 0 0 30px; }
+
+  .grid-services { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .service-card { padding: 22px; }
+  .service-card h3 { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 15.5px; margin-bottom: 8px; }
+  .service-card p { color: var(--text-dim); font-size: 13.5px; margin: 0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .form-card { padding: 32px; display: grid; grid-template-columns: 1fr 1.3fr; gap: 32px; align-items: start; }
+  .form-intro h2 { font-size: 20px; margin: 6px 0 10px; }
+  .form-intro p { color: var(--text-dim); font-size: 14px; margin: 0; }
+
+  .request-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-full { grid-column: 1 / -1; }
+  .field label { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .field input, .field textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    resize: vertical;
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  #req-submit { grid-column: 1 / -1; justify-self: start; }
+  .form-status { grid-column: 1 / -1; margin: 0; font-size: 13.5px; min-height: 1.2em; }
+  .form-status.ok { color: var(--ok); }
+  .form-status.error { color: var(--out); }
+
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step { padding: 20px; position: relative; }
+  .step-no {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .step h3 { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 15px; margin-bottom: 6px; }
+  .step p { color: var(--text-dim); font-size: 13px; margin: 0; }
+  .call-card { padding: 28px; }
+  .call-card h2 { font-size: 19px; margin: 6px 0 12px; }
+  .call-card p { color: var(--text-dim); font-size: 14px; margin-bottom: 20px; }
+
+  @media (max-width: 900px) {
+    .grid-services { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .form-card { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .grid-services { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .request-form { grid-template-columns: 1fr; }
+    .form-card { padding: 22px; }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('request-form') as HTMLFormElement | null;
+  const status = document.getElementById('req-status');
+  const submitBtn = document.getElementById('req-submit') as HTMLButtonElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!status || !submitBtn) return;
+
+    const formData = new FormData(form);
+    const payload = {
+      name: (formData.get('name') || '').toString(),
+      phone: (formData.get('phone') || '').toString(),
+      message: (formData.get('message') || '').toString(),
+      website: (formData.get('website') || '').toString(),
+    };
+
+    if (!payload.phone.trim()) {
+      status.textContent = 'Вкажіть телефон, щоб ми могли передзвонити.';
+      status.className = 'form-status error';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Надсилаємо...';
+    status.textContent = '';
+    status.className = 'form-status';
+
+    try {
+      const res = await fetch('/api/send-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        status.textContent = 'Заявку надіслано! Передзвонимо найближчим часом.';
+        status.className = 'form-status ok';
+        form.reset();
+      } else {
+        status.textContent = data.error || 'Не вдалося надіслати. Зателефонуйте нам напряму.';
+        status.className = 'form-status error';
+      }
+    } catch {
+      status.textContent = 'Не вдалося надіслати. Зателефонуйте нам напряму.';
+      status.className = 'form-status error';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Надіслати заявку';
+    }
+  });
+</script>

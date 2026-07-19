@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import site from '../data/site.json';
+import services from '../data/services.json';
+import categories from '../data/categories.json';
+import products from '../data/products.json';
+
+const featured = products.slice(0, 4);
+---
+
+<BaseLayout
+  title={`Ремонт техніки в ${site.cityLocative} — ${site.name}`}
+  description={`${site.tagline} Швидкий ремонт дрібнопобутової техніки, виїзд майстра додому, продаж нової та б/у техніки в ${site.cityLocative}.`}
+>
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="ticket hero-ticket">
+        <div class="ticket-head">
+          <span class="ticket-no">{site.shortName}</span>
+          <span class="ticket-date">м. {site.city}</span>
+        </div>
+        <h1 class="hero-title">Ремонт цифрової та<br />дрібнопобутової техніки<br />в {site.cityLocative}</h1>
+        <p class="hero-sub">
+          Приймаємо в майстерні або виїжджаємо додому. Скуповуємо непотрібну техніку,
+          продаємо перевірену б/у та нову — з гарантією.
+        </p>
+        <div class="hero-actions">
+          <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="btn btn-primary">Подзвонити: {site.phoneDisplay}</a>
+          <a href="/repair/" class="btn btn-ghost">Здати в ремонт</a>
+        </div>
+        <div class="stamp">прийнято</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section paths">
+    <div class="container paths-grid">
+      <a href="/repair/" class="ticket path-card">
+        <span class="ticket-no">Напрямок 1</span>
+        <h2>Ремонт техніки</h2>
+        <p>Полагодимо телефон, планшет, телевізор, ноутбук, ПК чи техніку для дому. Приймаємо в майстерні або виїжджаємо додому.</p>
+        <span class="path-cta">Здати в ремонт →</span>
+      </a>
+      <a href="/catalog/" class="ticket path-card">
+        <span class="ticket-no">Напрямок 2</span>
+        <h2>Магазин техніки</h2>
+        <p>Аксесуари, кабелі, батарейки, периферія та інша техніка — нова та б/у, під замовлення або в наявності.</p>
+        <span class="path-cta">Перейти в магазин →</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Що ремонтуємо</span>
+        <h2>Основні напрямки</h2>
+      </div>
+      <div class="grid-services">
+        {services.slice(0, 6).map((s) => (
+          <div class="ticket service-card">
+            <h3>{s.title}</h3>
+            <p>{s.desc}</p>
+          </div>
+        ))}
+      </div>
+      <a href="/repair/" class="link-more">Усі послуги ремонту →</a>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Каталог</span>
+        <h2>Категорії товарів</h2>
+      </div>
+      <div class="grid-categories">
+        {categories.map((c) => (
+          <a href={`/catalog/?category=${c.id}`} class="category-tile ticket">
+            {c.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container store-photo-grid">
+      <div class="store-photo ticket">
+        <img src="/storefront.jpg" alt={`${site.name} — вивіска магазину`} />
+      </div>
+      <div class="store-info">
+        <span class="eyebrow">Знайдіть нас</span>
+        <h2>Наша точка в {site.cityLocative}</h2>
+        <p>{site.address}</p>
+        <div class="store-hours">
+          {site.hours.map((h) => (
+            <div class="hours-row"><span>{h.days}</span><span>{h.time}</span></div>
+          ))}
+        </div>
+        <a href="/contacts/" class="btn btn-ghost">Як доїхати</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">В наявності зараз</span>
+        <h2>Популярні позиції</h2>
+      </div>
+      <div class="grid-products">
+        {featured.map((p) => <ProductCard product={p} />)}
+      </div>
+      <a href="/catalog/" class="link-more">Весь каталог →</a>
+    </div>
+  </section>
+
+  <section class="section cta">
+    <div class="container cta-inner ticket">
+      <div>
+        <h2>Купуємо техніку, яка вам не потрібна</h2>
+        <p>Стара, непрацююча, зайва — оцінимо і заберемо. Зателефонуйте, опишіть стан.</p>
+      </div>
+      <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="btn btn-primary">Подзвонити</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero { padding: 56px 0 20px; }
+  .hero-ticket {
+    padding: 36px 32px 40px;
+    max-width: 720px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ticket-head {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .ticket-head .ticket-no { position: static; background: none; padding: 0; color: var(--accent); }
+  .hero-title { font-size: clamp(24px, 3.6vw, 36px); margin-bottom: 16px; }
+  .hero-sub { color: var(--text-dim); font-size: 16px; max-width: 52ch; margin: 0 0 26px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stamp {
+    position: absolute;
+    right: 28px;
+    bottom: 24px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ok);
+    border: 2px solid var(--ok);
+    border-radius: 50%;
+    width: 84px;
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transform: rotate(-12deg);
+    opacity: 0.7;
+  }
+
+  .section { padding: 54px 0; }
+  .store-photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  .store-photo { overflow: hidden; padding: 0; }
+  .store-photo img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+  .store-info h2 { font-size: 22px; margin: 6px 0 12px; }
+  .store-info p { color: var(--text-dim); font-size: 14px; margin: 0 0 16px; }
+  .store-hours { margin-bottom: 22px; }
+  .store-hours .hours-row {
+    display: flex;
+    justify-content: space-between;
+    max-width: 240px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 3px 0;
+  }
+  .paths { padding-top: 8px; }
+  .paths-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .path-card {
+    padding: 28px;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .path-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .path-card h2 { font-size: 21px; margin: 8px 0 10px; }
+  .path-card p { color: var(--text-dim); font-size: 14px; margin: 0 0 16px; }
+  .path-cta {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .section-alt { background: var(--surface); }
+  .section-head { margin-bottom: 26px; }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .section-head h2 { margin: 0; font-size: 24px; }
+
+  .grid-services { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .service-card { padding: 20px; }
+  .service-card h3 { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 15px; margin-bottom: 8px; }
+  .service-card p { color: var(--text-dim); font-size: 13.5px; margin: 0; }
+
+  .grid-categories { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .category-tile {
+    padding: 20px 16px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    min-height: 74px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .category-tile:hover { border-color: var(--accent); color: var(--accent); }
+
+  .grid-products { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  .link-more {
+    display: inline-block;
+    margin-top: 22px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  .cta-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 34px 32px;
+    flex-wrap: wrap;
+  }
+  .cta-inner h2 { font-size: 21px; margin-bottom: 6px; }
+  .cta-inner p { color: var(--text-dim); margin: 0; font-size: 14px; }
+
+  @media (max-width: 900px) {
+    .grid-services { grid-template-columns: 1fr 1fr; }
+    .grid-categories { grid-template-columns: 1fr 1fr; }
+    .grid-products { grid-template-columns: 1fr 1fr; }
+    .store-photo-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .grid-services, .grid-categories, .grid-products, .paths-grid { grid-template-columns: 1fr; }
+    .hero-ticket { padding: 26px 20px 32px; }
+    .stamp { display: none; }
+  }
+</style>

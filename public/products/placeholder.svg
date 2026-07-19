@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#26241E"/>
+  <rect x="0.5" y="0.5" width="399" height="299" fill="none" stroke="#3A362E" stroke-width="1"/>
+  <g stroke="#4A4638" stroke-width="1.5">
+    <line x1="0" y1="0" x2="400" y2="300"/>
+    <line x1="400" y1="0" x2="0" y2="300"/>
+  </g>
+  <text x="200" y="155" font-family="monospace" font-size="14" fill="#7A7263" text-anchor="middle">ФОТО ТОВАРУ</text>
+</svg>

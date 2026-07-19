@@ -1,0 +1,70 @@
+[
+  {
+    "id": "telefony-i-planshety",
+    "label": "Телефони і планшети"
+  },
+  {
+    "id": "televizory-ta-kronshteiny",
+    "label": "Телевізори та кронштейни"
+  },
+  {
+    "id": "merezheve-obladnannia",
+    "label": "Мережеве обладнання"
+  },
+  {
+    "id": "kompiuterna-peryferiia",
+    "label": "Комп'ютерна периферія"
+  },
+  {
+    "id": "videosposterezhennia-ohorona-ro",
+    "label": "Відеоспостереження, Охорона, Розумний дім"
+  },
+  {
+    "id": "aksesuary-do-mobilnyh-telefoni",
+    "label": "Аксесуари до мобільних телефонів"
+  },
+  {
+    "id": "android-prystavky-proektory-a",
+    "label": "Android приставки, проектори, аксесуари"
+  },
+  {
+    "id": "kabel",
+    "label": "Кабель"
+  },
+  {
+    "id": "nakopychuvachy",
+    "label": "Накопичувачи"
+  },
+  {
+    "id": "elektrozhyvlennia",
+    "label": "Електроживлення"
+  },
+  {
+    "id": "osvitlennia",
+    "label": "Освітлення"
+  },
+  {
+    "id": "pulty-dystantsiinogo-keruvannia",
+    "label": "Пульти дистанційного керування"
+  },
+  {
+    "id": "instrumenty-multymetry-teste",
+    "label": "Інструменти, Мультиметри, Тестери"
+  },
+  {
+    "id": "audiotehnika",
+    "label": "Аудіотехніка"
+  },
+  {
+    "id": "suputnykove-tb",
+    "label": "Супутникове ТБ"
+  },
+  {
+    "id": "efirne-tb",
+    "label": "Ефірне ТБ"
+  },
+  {
+    "id": "vytratni-materialy",
+    "label": "Витратні матеріали"
+  }
+]
