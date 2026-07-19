@@ -56,14 +56,17 @@ import site from '../../data/site.json';
 
               <label class="radio-row">
                 <input type="radio" name="deliveryMethod" value="pickup" checked />
+                <span class="radio-dot" aria-hidden="true"></span>
                 <span>Самовивіз з магазину ({site.address})</span>
               </label>
               <label class="radio-row">
                 <input type="radio" name="deliveryMethod" value="city" />
-                <span>Доставка по {site.city} — безкоштовно</span>
+                <span class="radio-dot" aria-hidden="true"></span>
+                <span>Доставка по {site.cityLocative} — безкоштовно</span>
               </label>
               <label class="radio-row">
                 <input type="radio" name="deliveryMethod" value="nova_poshta" />
+                <span class="radio-dot" aria-hidden="true"></span>
                 <span>Нова пошта в інше місто</span>
               </label>
             </fieldset>
@@ -104,6 +107,10 @@ import site from '../../data/site.json';
 </BaseLayout>
 
 <style>
+  /* [hidden] має спрацьовувати завжди, навіть якщо в елемента є власний display:flex/grid —
+     інакше правило автора (та ж специфічність) переб'є вбудоване [hidden]{display:none} браузера. */
+  [hidden] { display: none !important; }
+
   .section { padding: 48px 0 70px; }
   .eyebrow {
     display: block;
@@ -166,10 +173,52 @@ import site from '../../data/site.json';
   .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
   .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
-  .delivery-fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: grid; gap: 8px; margin: 0; }
+  .delivery-fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: grid; gap: 4px; margin: 0; }
   .delivery-fieldset legend { padding: 0 4px; }
-  .radio-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text); cursor: pointer; }
-  .radio-row input { accent-color: var(--accent); }
+  .radio-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--text);
+    cursor: pointer;
+    padding: 8px 6px;
+    border-radius: var(--radius);
+    transition: background 0.15s ease;
+  }
+  .radio-row:hover { background: var(--bg); }
+  .radio-row input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .radio-dot {
+    position: relative;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg);
+    transition: border-color 0.15s ease;
+  }
+  .radio-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.15s ease;
+  }
+  .radio-row input:checked ~ .radio-dot { border-color: var(--accent); }
+  .radio-row input:checked ~ .radio-dot::after { transform: translate(-50%, -50%) scale(1); }
+  .radio-row input:focus-visible ~ .radio-dot { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .delivery-note { grid-column: 1 / -1; margin: -4px 0 0; font-size: 12.5px; color: var(--text-dim); }
 
@@ -348,19 +397,20 @@ import site from '../../data/site.json';
       const data = await res.json();
 
       if (res.ok && data.ok) {
-        status.textContent = 'Заявку надіслано! Ми зв\'яжемось найближчим часом, щоб підтвердити замовлення.';
+        status.textContent = 'Заявку надіслано! Ми зв\'яжемось найближчим часом, щоб підтвердити замовлення. Сторінка оновиться...';
         status.className = 'form-status ok';
-        form.reset();
         w.MelonCart.clear();
-        updateDeliveryUI();
+        submitBtn.textContent = 'Надіслано ✓';
+        setTimeout(() => { window.location.reload(); }, 1600);
       } else {
         status.textContent = data.error || 'Не вдалося надіслати. Зателефонуйте нам напряму.';
         status.className = 'form-status error';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Надіслати заявку';
       }
     } catch {
       status.textContent = 'Не вдалося надіслати. Зателефонуйте нам напряму.';
       status.className = 'form-status error';
-    } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Надіслати заявку';
     }
