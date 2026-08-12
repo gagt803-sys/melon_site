@@ -1,0 +1,19 @@
+{
+  "name": "masterskaya-site",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "node scripts/sync-products.mjs && astro dev",
+    "build": "node scripts/sync-products.mjs && astro build",
+    "sync": "node scripts/sync-products.mjs",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^7.0.7",
+    "csv-parse": "^7.0.1"
+  }
+}

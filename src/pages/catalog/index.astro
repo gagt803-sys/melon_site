@@ -1,0 +1,386 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import products from '../../data/products.json';
+import categories from '../../data/categories.json';
+import site from '../../data/site.json';
+---
+
+<BaseLayout
+  title={`Каталог товарів — ${site.name}`}
+  description={`Зарядки, кабелі, повербанки, батарейки, периферія, техніка нова та б/у в ${site.cityLocative}. Актуальні ціни та наявність.`}
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Каталог</span>
+        <h1>Товари в наявності</h1>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="search-input" placeholder="Пошук за назвою..." autocomplete="off" />
+        </div>
+
+        <details class="cat-dropdown" id="cat-dropdown">
+          <summary class="cat-dropdown-toggle">
+            <span class="cat-dropdown-label">Категорія:</span>
+            <span id="cat-current">Усі категорії</span>
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="cat-dropdown-panel">
+            <button class="cat-option active" data-cat="all" type="button">Усі категорії</button>
+            {categories.map((c) => (
+              <button class="cat-option" data-cat={c.id} type="button">{c.label}</button>
+            ))}
+          </div>
+        </details>
+
+        <div class="cond-filter" id="cond-filter" role="group" aria-label="Стан товару">
+          <button class="cond-btn active" data-cond="all" type="button">Усі</button>
+          <button class="cond-btn" data-cond="new" type="button">Нові</button>
+          <button class="cond-btn" data-cond="used" type="button">Б/У</button>
+        </div>
+
+        <div class="sort-control">
+          <label for="sort-select">Сортувати:</label>
+          <select id="sort-select">
+            <option value="popular">За популярністю</option>
+            <option value="name-asc">За назвою (А-Я)</option>
+            <option value="name-desc">За назвою (Я-А)</option>
+            <option value="price-asc">Ціна: спочатку дешевші</option>
+            <option value="price-desc">Ціна: спочатку дорожчі</option>
+            <option value="new">Спочатку нові</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="result-count" id="result-count"></p>
+
+      <div class="grid-products" id="product-grid">
+        {products.map((p) => (
+          <div
+            class="product-item"
+            data-cat={p.category}
+            data-name={p.name.toLowerCase()}
+            data-price={p.priceOnRequest ? '' : p.price}
+            data-id={p.id}
+            data-condition={p.condition}
+          >
+            <ProductCard product={p} />
+          </div>
+        ))}
+      </div>
+
+      <p class="empty-state" id="empty-state" hidden>
+        У цій категорії поки нічого немає — зателефонуйте, можливо, товар є, але ще не додано на сайт.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section { padding: 44px 0 70px; }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .section-head { margin-bottom: 24px; }
+  .section-head h1 { font-size: 26px; margin: 0; }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 220px;
+    flex: 1 1 220px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    transition: border-color 0.15s ease;
+  }
+  .search-box:focus-within { border-color: var(--accent); }
+  .search-box input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+  }
+  .search-box input::placeholder { color: var(--text-dim); }
+
+  /* Category dropdown */
+  .cat-dropdown {
+    position: relative;
+    min-width: 260px;
+  }
+  .cat-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    transition: border-color 0.15s ease;
+  }
+  .cat-dropdown-toggle::-webkit-details-marker { display: none; }
+  .cat-dropdown-toggle:hover { border-color: var(--accent); }
+  .cat-dropdown[open] .cat-dropdown-toggle { border-color: var(--accent); }
+  .cat-dropdown-label { color: var(--text-dim); }
+  #cat-current { color: var(--accent); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chevron { flex-shrink: 0; transition: transform 0.15s ease; color: var(--text-dim); }
+  .cat-dropdown[open] .chevron { transform: rotate(180deg); }
+
+  .cat-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 20;
+    width: min(420px, 90vw);
+    max-height: 340px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+  }
+  .cat-option {
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    padding: 9px 10px;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .cat-option:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+  .cat-option.active { color: var(--accent); border-color: var(--accent); }
+
+  /* Condition quick-filter */
+  .cond-filter { display: flex; gap: 6px; }
+  .cond-btn {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .cond-btn:hover { color: var(--text); }
+  .cond-btn.active { border-color: var(--accent); color: var(--accent); }
+
+  /* Sort control */
+  .sort-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-dim);
+  }
+  .sort-control select {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .sort-control select:hover, .sort-control select:focus { border-color: var(--accent); outline: none; }
+
+  .result-count {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin: 0 0 22px;
+  }
+
+  .grid-products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .empty-state { color: var(--text-dim); margin-top: 24px; font-size: 14px; }
+
+  @media (max-width: 900px) {
+    .grid-products { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .grid-products { grid-template-columns: 1fr; }
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .cat-dropdown { min-width: 0; }
+    .cond-filter { justify-content: stretch; }
+    .cond-btn { flex: 1; }
+    .sort-control { justify-content: space-between; }
+    .sort-control select { flex: 1; }
+  }
+</style>
+
+<script>
+  const grid = document.getElementById('product-grid');
+  const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+  const dropdown = document.getElementById('cat-dropdown') as HTMLDetailsElement | null;
+  const catCurrent = document.getElementById('cat-current');
+  const catOptions = document.querySelectorAll<HTMLButtonElement>('.cat-option');
+  const condButtons = document.querySelectorAll<HTMLButtonElement>('.cond-btn');
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement | null;
+  const resultCount = document.getElementById('result-count');
+  const emptyState = document.getElementById('empty-state');
+
+  let currentCat = 'all';
+  let currentCond = 'all';
+  let currentQuery = '';
+
+  function applyFilter() {
+    if (!grid) return;
+    const items = grid.querySelectorAll<HTMLElement>('.product-item');
+    let visibleCount = 0;
+    items.forEach((item) => {
+      const catMatch = currentCat === 'all' || item.dataset.cat === currentCat;
+      const condMatch = currentCond === 'all' || item.dataset.condition === currentCond;
+      const queryMatch = !currentQuery || (item.dataset.name || '').includes(currentQuery);
+      const match = catMatch && condMatch && queryMatch;
+      item.style.display = match ? '' : 'none';
+      if (match) visibleCount++;
+    });
+    if (emptyState) emptyState.hidden = visibleCount !== 0;
+    if (resultCount) {
+      resultCount.textContent = visibleCount === 0 ? '' : `Знайдено товарів: ${visibleCount}`;
+    }
+  }
+
+  function applySort() {
+    if (!grid || !sortSelect) return;
+    const mode = sortSelect.value;
+    const items = Array.from(grid.querySelectorAll<HTMLElement>('.product-item'));
+
+    items.sort((a, b) => {
+      if (mode === 'name-asc' || mode === 'name-desc') {
+        const cmp = (a.dataset.name || '').localeCompare(b.dataset.name || '', 'uk');
+        return mode === 'name-asc' ? cmp : -cmp;
+      }
+      if (mode === 'price-asc' || mode === 'price-desc') {
+        const aHas = a.dataset.price !== '';
+        const bHas = b.dataset.price !== '';
+        if (aHas && !bHas) return -1;
+        if (!aHas && bHas) return 1;
+        if (!aHas && !bHas) return 0;
+        const aPrice = parseFloat(a.dataset.price || '0');
+        const bPrice = parseFloat(b.dataset.price || '0');
+        return mode === 'price-asc' ? aPrice - bPrice : bPrice - aPrice;
+      }
+      if (mode === 'new') {
+        return parseInt(b.dataset.id || '0', 10) - parseInt(a.dataset.id || '0', 10);
+      }
+      // 'popular' — keep original catalog order
+      return 0;
+    });
+
+    if (mode === 'popular') {
+      items.sort((a, b) => parseInt(a.dataset.id || '0', 10) - parseInt(b.dataset.id || '0', 10));
+    }
+
+    items.forEach((item) => grid.appendChild(item));
+  }
+
+  function setCategory(cat: string, label: string) {
+    currentCat = cat;
+    if (catCurrent) catCurrent.textContent = label;
+    catOptions.forEach((opt) => opt.classList.toggle('active', opt.dataset.cat === cat));
+    applyFilter();
+    const url = new URL(window.location.href);
+    if (cat === 'all') url.searchParams.delete('category');
+    else url.searchParams.set('category', cat);
+    window.history.replaceState({}, '', url);
+    if (dropdown) dropdown.open = false;
+  }
+
+  function setCondition(cond: string) {
+    currentCond = cond;
+    condButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.cond === cond));
+    applyFilter();
+    const url = new URL(window.location.href);
+    if (cond === 'all') url.searchParams.delete('condition');
+    else url.searchParams.set('condition', cond);
+    window.history.replaceState({}, '', url);
+  }
+
+  searchInput?.addEventListener('input', () => {
+    currentQuery = searchInput.value.trim().toLowerCase();
+    applyFilter();
+  });
+
+  catOptions.forEach((opt) => {
+    opt.addEventListener('click', () => {
+      setCategory(opt.dataset.cat || 'all', opt.textContent?.trim() || 'Усі категорії');
+    });
+  });
+
+  condButtons.forEach((btn) => {
+    btn.addEventListener('click', () => setCondition(btn.dataset.cond || 'all'));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (dropdown && dropdown.open && !dropdown.contains(e.target as Node)) {
+      dropdown.open = false;
+    }
+  });
+
+  sortSelect?.addEventListener('change', applySort);
+
+  const params = new URLSearchParams(window.location.search);
+  const initialCat = params.get('category');
+  const initialCond = params.get('condition');
+
+  if (initialCat) {
+    const target = document.querySelector<HTMLButtonElement>(`.cat-option[data-cat="${initialCat}"]`);
+    if (target) currentCat = target.dataset.cat || 'all';
+    if (target && catCurrent) catCurrent.textContent = target.textContent?.trim() || 'Усі категорії';
+    catOptions.forEach((opt) => opt.classList.toggle('active', opt.dataset.cat === currentCat));
+  }
+  if (initialCond) {
+    const target = document.querySelector<HTMLButtonElement>(`.cond-btn[data-cond="${initialCond}"]`);
+    if (target) {
+      currentCond = target.dataset.cond || 'all';
+      condButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.cond === currentCond));
+    }
+  }
+  applyFilter();
+</script>

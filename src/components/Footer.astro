@@ -1,0 +1,91 @@
+---
+import site from '../data/site.json';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <div class="footer-brand">
+        <img src="/logo.png" alt="Мелон" class="footer-logo" width="36" height="36" />
+        <div class="footer-title">{site.name}</div>
+      </div>
+      <p class="footer-tagline">{site.tagline}</p>
+    </div>
+
+    <div>
+      <div class="footer-heading">Контакти</div>
+      <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="footer-link">{site.phone}</a>
+      {site.phone2 && <a href={`tel:${site.phone2.replace(/\s+/g, '')}`} class="footer-link">{site.phone2}</a>}
+      <p class="footer-text">{site.address}</p>
+    </div>
+
+    <div>
+      <div class="footer-heading">Графік роботи</div>
+      {site.hours.map((h) => (
+        <p class="footer-text hours-row"><span>{h.days}</span><span>{h.time}</span></p>
+      ))}
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© {year} {site.shortName}. {site.city}.</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    margin-top: 80px;
+    padding-top: 40px;
+    background: var(--surface);
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 32px;
+    padding-bottom: 30px;
+  }
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .footer-logo {
+    border-radius: 50%;
+    display: block;
+    flex-shrink: 0;
+  }
+  .footer-title {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 16px;
+    margin: 0;
+  }
+  .footer-tagline { color: var(--text-dim); font-size: 14px; }
+  .footer-heading {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .footer-link, .footer-text {
+    display: block;
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 0 0 6px;
+  }
+  .footer-link:hover { color: var(--accent); }
+  .hours-row { display: flex; justify-content: space-between; max-width: 200px; font-family: var(--font-mono); font-size: 13px; }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding: 16px 20px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  @media (max-width: 700px) {
+    .footer-inner { grid-template-columns: 1fr; }
+  }
+</style>
