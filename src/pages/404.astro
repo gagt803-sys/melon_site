@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../data/site.json';
+---
+
+<BaseLayout
+  title={`Сторінку не знайдено — ${site.name}`}
+  description="Такої сторінки не існує. Поверніться на головну або перейдіть в каталог."
+>
+  <section class="section">
+    <div class="container">
+      <div class="ticket" style="max-width: 480px; margin: 0 auto; text-align: center; padding: 40px 24px;">
+        <span class="ticket-no">Помилка 404</span>
+        <h1 style="margin: 16px 0 8px;">Сторінку не знайдено</h1>
+        <p style="margin-bottom: 24px;">
+          Можливо, її перемістили або посилання застаріло. Спробуйте почати з головної.
+        </p>
+        <div class="hero-actions" style="justify-content: center;">
+          <a href="/" class="btn btn-primary">На головну</a>
+          <a href="/catalog/" class="btn btn-ghost">В каталог</a>
+        </div>
+        <div class="stamp">не знайдено</div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

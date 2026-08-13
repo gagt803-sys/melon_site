@@ -1,12 +1,32 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProductCard from '../components/ProductCard.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
 import site from '../data/site.json';
 import services from '../data/services.json';
 import categories from '../data/categories.json';
 import products from '../data/products.json';
 
 const featured = products.slice(0, 4);
+
+const faq = [
+  {
+    q: 'Чи можна викликати майстра додому?',
+    a: 'Так, для великих або важких приладів (телевізор, пральна машина тощо) майстер виїжджає на адресу. Вартість виїзду узгоджується по телефону.',
+  },
+  {
+    q: 'Скільки часу займе ремонт?',
+    a: 'Термін і вартість озвучуємо одразу після діагностики — без сюрпризів. Дрібний ремонт часто робимо в той самий день.',
+  },
+  {
+    q: 'Купуєте техніку, яка вже не працює?',
+    a: `Так, скуповуємо стару, непрацюючу або зайву техніку — на деталі чи для відновлення. Зателефонуйте і опишіть стан, оцінимо одразу.`,
+  },
+  {
+    q: 'Який графік роботи?',
+    a: site.hours.map((h) => `${h.days}: ${h.time}`).join('; ') + `. Адреса: ${site.address}.`,
+  },
+];
 ---
 
 <BaseLayout
@@ -34,7 +54,28 @@ const featured = products.slice(0, 4);
     </div>
   </section>
 
-  <section class="section paths">
+  <section class="section trust-strip" data-reveal>
+    <div class="container trust-strip-inner">
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        <span>Гарантія на виконані роботи</span>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="7" width="15" height="10" rx="1"></rect><path d="M16 10h3l3 3v4h-6"></path><circle cx="6" cy="19" r="1.6"></circle><circle cx="17.5" cy="19" r="1.6"></circle></svg>
+        <span>Виїзд майстра додому</span>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        <span>Ціну і термін кажемо одразу після діагностики</span>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6c-1.6-1.6-4.2-1.6-5.8 0L12 7.5 9 4.6c-1.6-1.6-4.2-1.6-5.8 0-1.6 1.6-1.6 4.2 0 5.8L12 19l8.8-8.6c1.6-1.6 1.6-4.2 0-5.8z"></path></svg>
+        <span>Ремонтуємо в {site.cityLocative} з власної майстерні</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section paths" data-reveal>
     <div class="container paths-grid">
       <a href="/repair/" class="ticket path-card">
         <span class="ticket-no">Напрямок 1</span>
@@ -51,7 +92,38 @@ const featured = products.slice(0, 4);
     </div>
   </section>
 
-  <section class="section">
+  <section class="section section-alt" data-reveal>
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Як це працює</span>
+        <h2>Від заявки до готового ремонту</h2>
+      </div>
+      <div class="steps">
+        <div class="step ticket">
+          <span class="step-no">01</span>
+          <h3>Здали</h3>
+          <p>Приносите техніку в майстерню або викликаєте майстра додому.</p>
+        </div>
+        <div class="step ticket">
+          <span class="step-no">02</span>
+          <h3>Діагностика</h3>
+          <p>Визначаємо несправність і одразу озвучуємо ціну та термін.</p>
+        </div>
+        <div class="step ticket">
+          <span class="step-no">03</span>
+          <h3>Ремонт</h3>
+          <p>Виконуємо роботи, використовуємо перевірені запчастини.</p>
+        </div>
+        <div class="step ticket">
+          <span class="step-no">04</span>
+          <h3>Забрали</h3>
+          <p>Отримуєте техніку, що працює, з гарантією на ремонт.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" data-reveal>
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">Що ремонтуємо</span>
@@ -60,6 +132,7 @@ const featured = products.slice(0, 4);
       <div class="grid-services">
         {services.slice(0, 6).map((s) => (
           <div class="ticket service-card">
+            <ServiceIcon name={s.icon} />
             <h3>{s.title}</h3>
             <p>{s.desc}</p>
           </div>
@@ -69,7 +142,7 @@ const featured = products.slice(0, 4);
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section section-alt" data-reveal>
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">Каталог</span>
@@ -85,7 +158,7 @@ const featured = products.slice(0, 4);
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section section-alt" data-reveal>
     <div class="container store-photo-grid">
       <div class="store-photo ticket">
         <img src="/storefront.jpg" alt={`${site.name} — вивіска магазину`} />
@@ -104,7 +177,7 @@ const featured = products.slice(0, 4);
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-reveal>
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">В наявності зараз</span>
@@ -117,7 +190,33 @@ const featured = products.slice(0, 4);
     </div>
   </section>
 
-  <section class="section cta">
+  <section class="section section-alt faq" data-reveal>
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Питання</span>
+        <h2>Часті запитання</h2>
+      </div>
+      <div class="faq-list">
+        {faq.map((item) => (
+          <details class="faq-item ticket">
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a },
+      })),
+    })} />
+  </section>
+
+  <section class="section cta" data-reveal>
     <div class="container cta-inner ticket">
       <div>
         <h2>Купуємо техніку, яка вам не потрібна</h2>
@@ -172,6 +271,55 @@ const featured = products.slice(0, 4);
   }
 
   .section { padding: 54px 0; }
+
+  .trust-strip { padding: 28px 0 8px; }
+  .trust-strip-inner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 12px 4px;
+    border-top: 1px dashed var(--border);
+  }
+  .trust-item svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
+
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step { padding: 20px; }
+  .step-no {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .step h3 { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 15px; margin-bottom: 6px; }
+  .step p { color: var(--text-dim); font-size: 13px; margin: 0; }
+
+  .faq-list { display: flex; flex-direction: column; gap: 10px; max-width: 760px; }
+  .faq-item { padding: 16px 20px; }
+  .faq-item summary {
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: '+';
+    float: right;
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+  .faq-item[open] summary::after { content: '−'; }
+  .faq-item p { color: var(--text-dim); font-size: 14px; margin: 12px 0 0; }
   .store-photo-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -268,10 +416,14 @@ const featured = products.slice(0, 4);
     .grid-categories { grid-template-columns: 1fr 1fr; }
     .grid-products { grid-template-columns: 1fr 1fr; }
     .store-photo-grid { grid-template-columns: 1fr; }
+    .trust-strip-inner { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 560px) {
     .grid-services, .grid-categories, .grid-products, .paths-grid { grid-template-columns: 1fr; }
     .hero-ticket { padding: 26px 20px 32px; }
     .stamp { display: none; }
+    .trust-strip-inner { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
   }
 </style>

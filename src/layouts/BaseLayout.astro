@@ -1,15 +1,19 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import FloatingCall from '../components/FloatingCall.astro';
 import site from '../data/site.json';
 import '../styles/global.css';
 
 interface Props {
   title: string;
   description: string;
+  ogImage?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, ogImage = '/og-image.jpg' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -38,14 +42,30 @@ const jsonLd = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="canonical" href={canonicalURL} />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content={site.seoKeywords} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:locale" content="uk_UA" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>
+      // додаємо клас до <html> синхронно, до першого пейнта — щоб уникнути
+      // "миготіння" контенту (без JS секції завжди залишаються видимими)
+      document.documentElement.classList.add('js-reveal');
+    </script>
     <script is:inline src="/js/cart.js"></script>
+    <script is:inline src="/js/toast.js"></script>
     {site.gaId && (
       <>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${site.gaId}`}></script>
@@ -55,6 +75,7 @@ const jsonLd = {
           gtag('js', new Date());
           gtag('config', gaId);
         </script>
+        <script is:inline src="/js/analytics-events.js"></script>
       </>
     )}
   </head>
@@ -64,5 +85,7 @@ const jsonLd = {
       <slot />
     </main>
     <Footer />
+    <FloatingCall />
+    <script is:inline src="/js/reveal.js"></script>
   </body>
 </html>

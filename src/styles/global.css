@@ -132,3 +132,89 @@ select:focus-visible {
   * { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
 }
+
+/* --- scroll reveal: елементи ховаються тільки якщо JS увімкнено, --- */
+/* --- щоб без JS / зі screen reader контент завжди був видимий --- */
+html.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.js-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- тости (напр. «додано в кошик») --- */
+.toast-root {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  max-width: min(320px, calc(100vw - 32px));
+  pointer-events: none;
+}
+.toast {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--ok);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  font-size: 13.5px;
+  color: var(--text);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ok);
+  color: #141414;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toast-text b { color: var(--text); font-weight: 600; }
+
+@keyframes cartBump { 0% { transform: scale(1); } 45% { transform: scale(1.4); } 100% { transform: scale(1); } }
+.cart-count.bump { animation: cartBump 0.4s ease; }
+
+/* --- плаваюча кнопка дзвінка (мобільні) --- */
+.floating-call {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 150;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  transition: transform 0.15s ease, background 0.15s ease;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.floating-call:hover, .floating-call:active { background: #FF3B30; transform: translateY(-2px); }
+.floating-call svg { width: 24px; height: 24px; }
+
+@media (max-width: 860px) {
+  .floating-call { display: flex; }
+  .toast-root { bottom: 84px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+}

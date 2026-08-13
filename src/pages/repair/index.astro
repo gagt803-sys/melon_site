@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceIcon from '../../components/ServiceIcon.astro';
 import services from '../../data/services.json';
 import site from '../../data/site.json';
 ---
@@ -19,9 +20,10 @@ import site from '../../data/site.json';
         </p>
       </div>
 
-      <div class="grid-services">
+      <div class="grid-services" data-reveal>
         {services.map((s) => (
           <div class="ticket service-card">
+            <ServiceIcon name={s.icon} />
             <h3>{s.title}</h3>
             <p>{s.desc}</p>
           </div>
@@ -30,7 +32,7 @@ import site from '../../data/site.json';
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section section-alt" data-reveal>
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">Як це працює</span>
@@ -61,7 +63,7 @@ import site from '../../data/site.json';
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-reveal>
     <div class="container two-col">
       <div class="ticket call-card">
         <span class="ticket-no">Виїзд майстра</span>
@@ -85,7 +87,7 @@ import site from '../../data/site.json';
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section section-alt" data-reveal>
     <div class="container">
       <div class="ticket form-card" id="request-card">
         <div class="form-intro">
@@ -236,6 +238,7 @@ import site from '../../data/site.json';
         status.textContent = 'Заявку надіслано! Передзвонимо найближчим часом.';
         status.className = 'form-status ok';
         form.reset();
+        document.dispatchEvent(new CustomEvent('lead:submitted'));
       } else {
         status.textContent = data.error || 'Не вдалося надіслати. Зателефонуйте нам напряму.';
         status.className = 'form-status error';

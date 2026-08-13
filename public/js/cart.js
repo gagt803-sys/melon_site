@@ -41,7 +41,9 @@
         qty: Math.min(99, qty),
       });
     }
-    return write(items);
+    items = write(items);
+    document.dispatchEvent(new CustomEvent('cart:added', { detail: { item: item, qty: qty } }));
+    return items;
   }
 
   function setQty(slug, qty) {
