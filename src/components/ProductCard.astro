@@ -1,4 +1,6 @@
 ---
+import { isNewProduct } from '../utils/products';
+
 interface Props {
   product: {
     id: string;
@@ -9,10 +11,12 @@ interface Props {
     condition: string;
     availability: string;
     image: string;
+    dateAdded?: string;
   };
 }
 const { product } = Astro.props;
 const stockLabel = { in: 'В наявності', order: 'Під замовлення', out: 'Немає в наявності' }[product.availability] || 'Уточнюйте';
+const isNew = isNewProduct(product);
 ---
 
 <a href={`/catalog/${product.slug}/`} class="card ticket">
@@ -20,6 +24,7 @@ const stockLabel = { in: 'В наявності', order: 'Під замовле�
   <div class="card-image">
     <img src={product.image} alt={product.name} loading="lazy" />
     {product.condition === 'used' && <span class="tag tag-used">Б/У</span>}
+    {isNew && <span class="tag tag-new">New</span>}
     <span class:list={['cart-badge', product.availability]} title={stockLabel} aria-hidden="true">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="9" cy="21" r="1"></circle>
@@ -90,6 +95,15 @@ const stockLabel = { in: 'В наявності', order: 'Під замовле�
     text-transform: uppercase;
   }
   .tag-used { background: var(--copper); color: #FFFFFF; }
+  .tag-new {
+    left: auto;
+    right: 12px;
+    background: var(--ok);
+    color: #141414;
+    font-weight: 700;
+  }
+  /* якщо є і "Б/У", і "New" одночасно (щойно надійшов вживаний товар) — розводимо по кутах */
+  .tag-used ~ .tag-new { bottom: auto; top: 46px; }
   .cart-badge {
     position: absolute;
     top: 10px;

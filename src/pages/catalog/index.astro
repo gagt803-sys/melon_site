@@ -4,6 +4,9 @@ import ProductCard from '../../components/ProductCard.astro';
 import products from '../../data/products.json';
 import categories from '../../data/categories.json';
 import site from '../../data/site.json';
+import { sortNewFirst } from '../../utils/products';
+
+const sortedProducts = sortNewFirst(products);
 ---
 
 <BaseLayout
@@ -59,13 +62,15 @@ import site from '../../data/site.json';
       <p class="result-count" id="result-count"></p>
 
       <div class="grid-products" id="product-grid">
-        {products.map((p) => (
+        {sortedProducts.map((p, i) => (
           <div
             class="product-item"
             data-cat={p.category}
             data-name={p.name.toLowerCase()}
             data-price={p.priceOnRequest ? '' : p.price}
             data-id={p.id}
+            data-order={i}
+            data-date={p.dateAdded || ''}
             data-condition={p.condition}
           >
             <ProductCard product={p} />
@@ -307,14 +312,19 @@ import site from '../../data/site.json';
         return mode === 'price-asc' ? aPrice - bPrice : bPrice - aPrice;
       }
       if (mode === 'new') {
-        return parseInt(b.dataset.id || '0', 10) - parseInt(a.dataset.id || '0', 10);
+        const aDate = a.dataset.date || '';
+        const bDate = b.dataset.date || '';
+        if (aDate && !bDate) return -1;
+        if (!aDate && bDate) return 1;
+        if (aDate && bDate) return bDate.localeCompare(aDate);
+        return parseInt(a.dataset.order || '0', 10) - parseInt(b.dataset.order || '0', 10);
       }
-      // 'popular' — keep original catalog order
+      // 'popular' — вихідний порядок каталогу (нові товари вже йдуть першими на сервері)
       return 0;
     });
 
     if (mode === 'popular') {
-      items.sort((a, b) => parseInt(a.dataset.id || '0', 10) - parseInt(b.dataset.id || '0', 10));
+      items.sort((a, b) => parseInt(a.dataset.order || '0', 10) - parseInt(b.dataset.order || '0', 10));
     }
 
     items.forEach((item) => grid.appendChild(item));

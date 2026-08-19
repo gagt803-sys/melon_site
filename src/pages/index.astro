@@ -6,8 +6,9 @@ import site from '../data/site.json';
 import services from '../data/services.json';
 import categories from '../data/categories.json';
 import products from '../data/products.json';
+import { sortNewFirst } from '../utils/products';
 
-const featured = products.slice(0, 4);
+const featured = sortNewFirst(products).slice(0, 4);
 
 const faq = [
   {

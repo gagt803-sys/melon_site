@@ -90,6 +90,15 @@ async function main() {
   const categories = JSON.parse(fs.readFileSync(CATEGORIES_PATH, 'utf-8'));
   const labelToId = new Map(categories.map((c) => [c.label.trim().toLowerCase(), c.id]));
 
+  // читаем текущий (уже закоммиченный в git) products.json ДО перезаписи —
+  // из него берём dateAdded для товаров, которые уже были на сайте раньше,
+  // чтобы бейдж "New" не сбрасывался каждый билд
+  const prevProducts = fs.existsSync(PRODUCTS_PATH)
+    ? JSON.parse(fs.readFileSync(PRODUCTS_PATH, 'utf-8'))
+    : [];
+  const prevBySlug = new Map(prevProducts.map((p) => [p.slug, p]));
+  const today = new Date().toISOString().slice(0, 10);
+
   const usedSlugs = new Set();
   const products = [];
   let skipped = 0;
@@ -129,9 +138,16 @@ async function main() {
 
     const description = (row['Опис'] || '').trim() || name;
 
+    const slug = slugify(name, usedSlugs);
+    // товар уже был на сайте раньше — берём его старую dateAdded (может быть пустой,
+    // если он там с самого начала и никогда не считался "новым" — это нормально).
+    // товара раньше не было — значит он появился только что, ставим сьогоднішню дату.
+    const prev = prevBySlug.get(slug);
+    const dateAdded = prev ? (prev.dateAdded || '') : today;
+
     products.push({
       id: String(idx + 1),
-      slug: slugify(name, usedSlugs),
+      slug,
       name,
       category: categoryId,
       subcategory: '',
@@ -143,6 +159,7 @@ async function main() {
       warranty,
       image,
       description,
+      dateAdded,
     });
   });
 
