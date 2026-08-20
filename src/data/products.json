@@ -2617,7 +2617,7 @@
     "condition": "new",
     "price": 0,
     "priceOnRequest": true,
-    "availability": "in",
+    "availability": "order",
     "warranty": null,
     "image": "/products/мережевий-фільтр-подовжувач-loga-electro-5-розеток-4.5м-10a.webp",
     "description": "Мережевий фільтр з захистом від перевантажень, світловим індикатором та ударостійким корпусом. 5 розеток, довжина шнура 4.5 м, номінальна напруга 220В, максимальний струм 10А.",
